@@ -1,4 +1,4 @@
-import "./globals.css"; // globals.css をインポート
+import "./globals.css";
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -10,43 +10,55 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
-      {/* ★★★ bodyタグに直接スタイルを指定 ★★★ */}
-      <body 
-        style={{
-          position: 'relative', // 子要素のfixedの基準
-          minHeight: '100vh',
-        }}
-      >
+      <body style={{ position: 'relative', minHeight: '100vh' }}>
+        
         {/* === 低レイヤー：背景アイコン === */}
-        {/* ここにCSSだけで背景を指定する */}
         <div 
           style={{
+            // --- 配置 ---
             position: 'fixed',
-            inset: '0px',
-            zIndex: -1, // ★★★ コンテンツの後ろに配置するため-1にする ★★★
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: -1, // コンテンツの背後に配置
+
+            // --- 背景画像の設定 ---
             backgroundImage: `url('/icon.png')`,
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
-            backgroundSize: 'contain',
-            opacity: 0.05, // 5%
-            pointerEvents: 'none',
+            backgroundSize: 'contain', // 画像がはみ出ないように調整
+
+            // --- 見た目の調整 ---
+            opacity: 0.15, // 透明度を3%に設定 (お好みで調整)
+            pointerEvents: 'none', // マウス操作を無効化
           }}
         ></div>
 
-        {/* === 高レイヤー：コンテンツ本体 (z-indexは不要) === */}
-        <div>
-          <header style={{ backgroundColor: 'rgba(30, 41, 59, 0.8)', backdropFilter: 'blur(4px)', position: 'sticky', top: '0' }}>
-            <nav style={{ maxWidth: '1280px', margin: 'auto', padding: '1rem 1.5rem' }}>
-              <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem' }}>
+        {/* === 高レイヤー：コンテンツ本体 === */}
+        <div style={{ position: 'relative' }}>
+          <header style={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', // 半透明の白
+            backdropFilter: 'blur(8px)', // すりガラス効果
+            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', 
+          }}>
+            <nav style={{ 
+              maxWidth: '1280px', 
+              margin: 'auto', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between'
+            }}>
+              <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
                 <Image
                   src="/icon.png"
                   alt="utalog icon"
-                  width={48}
-                  height={48}
+                  width={100}
+                  height={100}
                   priority
                 />
-                <span style={{ fontSize: '1.5rem', fontWeight: '700', color: 'white' }}>
-                  utalog
+                <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1e293b' }}>
+                  Uta-Log
                 </span>
               </Link>
             </nav>

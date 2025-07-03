@@ -1,0 +1,113 @@
+/* SongDetailPage.module.css */
+
+/* --- ページ全体のコンテナ --- */
+.container {
+  /* 必要に応じてスタイルを追加 */
+}
+
+/* --- 「戻る」ボタン --- */
+.backButton {
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: #0ea5e9; /* text-sky-500 */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: color 200ms;
+}
+.backButton:hover {
+  color: #38bdf8; /* hover:text-sky-400 */
+}
+.backButton svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e293b; /* text-slate-800 */
+}
+.artist {
+  font-size: 1.25rem;
+  color: #475569; /* text-slate-600 */
+  margin-bottom: 2rem;
+}
+
+/* ★★★ ここからが修正箇所 ★★★ */
+.section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  
+  /* background-color を削除し、background プロパティで直接指定 */
+  background: rgba(255, 255, 255, 0.65); /* 65%の不透明度 (より濃く) */
+
+  /* backdrop-filter を削除 */
+
+  border: 1px solid rgba(226, 232, 240, 0.4);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e293b; /* text-slate-800 */
+}
+/* ★★★ ここまで ★★★ */
+
+
+/* --- テーブルのスタイル --- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tableHead {
+  background-color: #f8fafc; /* bg-slate-50 */
+}
+.th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.tr:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0;
+}
+.td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* --- スコア表示 --- */
+.score {
+  font-size: 1.5rem; /* text-2xl */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 700;
+  color: #475569; /* デフォルトの色を濃いグレーに */
+}
+
+/* ★★★ スコアの色分けクラスを追加 ★★★ */
+.score.high { color: #eab308; } /* 90-95 */
+.score.very-high { color: #0ea5e9; } /* 85-90 */
+.score.rainbow { /* 95+ */
+  background-image: linear-gradient(to right, #facc15, #ec4899, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+
+.scoreUnit {
+  font-size: 0.875rem;
+  font-family: sans-serif;
+  color: #475569;
+}
+.date {
+  font-size: 0.875rem;
+  color: #475569;
+}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import styles from './style/HomePage.module.css'; // CSS Moduleをインポート
+import styles from './style/HomePage.module.css';
 
 export default function HomePage() {
   const [history, setHistory] = useState([]);
@@ -10,17 +10,26 @@ export default function HomePage() {
   const [error, setError] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
 
-  // ... (useEffectやソート関数は変更なし) ...
   useEffect(() => {
     fetch('/api/songs')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('データベースからのデータ取得に失敗しました。');
+        return res.json();
+      })
       .then(data => {
-        setHistory(data.map(item => ({...item, date: new Date(item.date)})));
+        // ★★★ 「一採点一表示」に戻すため、集計ロジックは不要 ★★★
+        const formattedHistory = data.map(item => ({
+          ...item,
+          date: new Date(item.date),
+          // score が null や undefined でも 0 として扱う
+          score: Number(item.score) || 0,
+        }));
+        setHistory(formattedHistory);
         setLoading(false);
       })
       .catch(err => { setError(err.message); setLoading(false); });
   }, []);
-
+  
   const sortedHistory = [...history].sort((a, b) => {
     const key = sortConfig.key;
     const direction = sortConfig.direction === 'asc' ? 1 : -1;
@@ -44,28 +53,27 @@ export default function HomePage() {
     return sortConfig.direction === 'desc' ? '▼' : '▲';
   };
 
-  // スコアの色分けロジック
   const getScoreClassName = (score) => {
-    let classNames = [styles.score]; // 基本クラス
+    let classNames = [styles.score];
     if (score >= 95) classNames.push(styles.rainbow);
     else if (score >= 90) classNames.push(styles.high);
     else if (score >= 85) classNames.push(styles.veryHigh);
-    return classNames.join(' '); // "score rainbow" のような文字列を返す
+    return classNames.join(' ');
   };
 
-
-  if (loading) return <div className="text-center text-lg animate-pulse">データを読み込み中...</div>;
-  if (error) return <div className="text-center text-lg text-red-400 p-4 bg-red-900/50 rounded-lg">{error}</div>;
+  if (loading) return <div>読み込み中...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>UtaLog Dashboard</h1>
+        <h1 className={styles.title}>楽曲一覧</h1>
       </div>
 
       <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead className={styles.tableHead}>
+            {/* ★★★ ヘッダーを「一採点一表示」用に修正 ★★★ */}
             <tr>
               <th className={styles.th} onClick={() => requestSort('title')}>曲名 {getSortIndicator('title')}</th>
               <th className={styles.th} onClick={() => requestSort('artist')}>アーティスト名 {getSortIndicator('artist')}</th>
@@ -76,14 +84,19 @@ export default function HomePage() {
           <tbody className={styles.tableBody}>
             {sortedHistory.map(item => (
               <tr key={item.id} className={styles.tr}>
-                <td className={`${styles.td} ${styles.songTitle}`}>
-                  <Link href={`/song/${encodeURIComponent(item.title)}`}>
+                <td className={styles.td}>
+                  <Link href={`/song/${encodeURIComponent(item.title)}`} className={styles.songTitle}>
                     <div>{item.title}</div>
                   </Link>
                 </td>
-                <td className={`${styles.td} ${styles.artistName}`}>{item.artist}</td>
+                <td className={`${styles.td} ${styles.artistName}`}>
+                  {item.artist}
+                </td>
                 <td className={styles.td}>
-                  <span className={getScoreClassName(item.score)}>{item.score.toFixed(3)}</span>
+                  {/* ★★★ toFixed を呼び出す item.score が必ず数値であることを保証 ★★★ */}
+                  <span className={getScoreClassName(item.score)}>
+                    {item.score.toFixed(3)}
+                  </span>
                 </td>
                 <td className={`${styles.td} ${styles.date}`}>
                   {item.date.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
