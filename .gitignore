@@ -8,6 +8,10 @@
 /prisma/dev.db
 /prisma/dev.db-journal
 
+# データベースファイル（個人情報の塊）
+/prisma/prisma/dev.db
+/prisma/prisma/dev.db-journal
+
 # 環境変数ファイル（★★★絶対に含めない★★★）
 .env
 .env.local
