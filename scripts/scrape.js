@@ -49,6 +49,7 @@ function getMeta(xmlData) {
 
 
 async function main() {
+  // ... (main関数前半のデータ取得ロジックは変更なし) ...
   if (!CDM_CARD_NO || CDM_CARD_NO === '0000000000') {
     console.error('エラー: .env ファイルに DAM_CDM_CARD_NO を設定してください。');
     return;
@@ -56,15 +57,13 @@ async function main() {
   
   console.log('--- utalog データ更新開始 (最新5件比較・最適化版) ---');
 
-  // ★★★ 1. DBから最新5件のIDとスコアを取得 ★★★
   const latestDbRecords = await prisma.songHistory.findMany({
-    take: 5, // 取得件数を5件に修正
+    take: 5,
     orderBy: { date: 'desc' },
     select: { id: true, score: true },
   });
   const dbRecordMap = new Map(latestDbRecords.map(r => [r.id, r.score]));
 
-  // 2. APIから最初のページ（最新5件）を取得
   let firstPageResults = [];
   try {
     const response = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: 1 }});
@@ -76,8 +75,6 @@ async function main() {
     return;
   }
   
-  // 3. APIの最新5件が、DBの最新5件に全て含まれているかチェック
-  // (DBの件数が5件未満の場合も考慮)
   const isUpToDate = firstPageResults.length > 0 && 
                      latestDbRecords.length >= firstPageResults.length &&
                      firstPageResults.every(apiRecord => 
@@ -90,7 +87,6 @@ async function main() {
   }
   console.log('新しい歌唱履歴、または更新を検知しました。詳細なデータ取得を開始します...');
 
-  // --- 更新が必要な場合のみ、以下の詳細な取得処理を実行 ---
   let allNewData = [];
   let currentPage = 1;
   let hasNext = true;
@@ -98,7 +94,6 @@ async function main() {
 
   while (allNewData.length < MAX_ITEMS && hasNext && !shouldStop) {
     const pageResults = (currentPage === 1) ? firstPageResults : await (async () => {
-      console.log(`[${currentPage}ページ目] のデータをAPIから取得中...`);
       try {
         const response = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: currentPage }});
         const parser = new xml2js.Parser();
@@ -110,14 +105,7 @@ async function main() {
     if (pageResults.length === 0) break;
 
     for (const item of pageResults) {
-      // findUniqueの代わりにfindFirstを使うことで、scoreの比較もロジックに含められる
-      const existingRecord = await prisma.songHistory.findFirst({ 
-        where: { 
-          id: item.id,
-          score: item.score // スコアも一致するか確認
-        } 
-      });
-
+      const existingRecord = await prisma.songHistory.findUnique({ where: { id: item.id } });
       if (existingRecord) {
         shouldStop = true;
         break;
@@ -127,16 +115,11 @@ async function main() {
     }
     
     if (!shouldStop) {
-      // hasNextの判定も初回のAPIレスポンスを再利用できる
-      if(currentPage === 1) {
-          const metaResponse = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: currentPage }});
-          const parser = new xml2js.Parser();
-          const metaJson = await parser.parseStringPromise(metaResponse.data);
-          hasNext = getMeta(metaJson).hasNext;
-      } else {
-          hasNext = pageResults.length > 0; // 簡略化
-      }
-      currentPage++;
+        const metaResponse = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: currentPage }});
+        const parser = new xml2js.Parser();
+        const metaJson = await parser.parseStringPromise(metaResponse.data);
+        hasNext = getMeta(metaJson).hasNext;
+        currentPage++;
     }
   }
 
@@ -148,12 +131,33 @@ async function main() {
   const finalData = allNewData.slice(0, MAX_ITEMS);
   console.log(`APIから新たに${finalData.length}件のデータを取得しました。データベースに書き込みます...`);
   
-  const { count } = await prisma.songHistory.createMany({
-    data: finalData,
-    skipDuplicates: true,
-  });
+  // ★★★ ここからが修正箇所 ★★★
+  let processedCount = 0;
+  // createManyの代わりに、1件ずつupsertを実行するループ処理に変更
+  for (const item of finalData) {
+    // 不正なデータはスキップ
+    if (!item.id || !item.date || isNaN(item.score)) continue;
+
+    await prisma.songHistory.upsert({
+      where: { id: item.id },
+      // 既存のレコードが見つかった場合の更新内容
+      update: {
+        score: item.score,
+        date: item.date, // 日時も更新される可能性があるため
+      },
+      // 新規レコードの場合の作成内容
+      create: {
+        id: item.id,
+        title: item.title,
+        artist: item.artist,
+        score: item.score,
+        date: item.date,
+      },
+    });
+    processedCount++;
+  }
   
-  console.log(`データベースに${count}件の新しいレコードを追加しました。`);
+  console.log(`データベースの更新が完了しました。（${processedCount}件処理）`);
 }
 
 main()
