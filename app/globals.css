@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-slate-900 text-slate-300;
+  background-image: radial-gradient(circle at 1px 1px, #334155 1px, transparent 0);
+  background-size: 2rem 2rem;
+}

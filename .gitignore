@@ -1,0 +1,29 @@
+# 依存関係（npm installで自動生成される）
+/node_modules
+
+# Next.jsのビルド生成物・キャッシュ
+/.next/
+
+# データベースファイル（個人情報の塊）
+/prisma/dev.db
+/prisma/dev.db-journal
+
+# 環境変数ファイル（★★★絶対に含めない★★★）
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# データ取得スクリプトが生成するデータ（JSONファイル版の場合）
+# /data/
+# /scripts/data/
+
+# OS固有のファイル
+.DS_Store
+Thumbs.db
+
+# ログファイル
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
