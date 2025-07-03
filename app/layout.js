@@ -1,4 +1,4 @@
-import "./globals.css";
+import "./globals.css"; // globals.css をインポート
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -10,40 +10,52 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
+      {/* ★★★ bodyタグに直接スタイルを指定 ★★★ */}
       <body 
-        className="relative min-h-screen bg-slate-900" 
         style={{
-          '--bg-icon-url': `url('/icon.png')` // 背景画像のパスも /icon.png に統一
+          position: 'relative', // 子要素のfixedの基準
+          minHeight: '100vh',
         }}
       >
+        {/* === 低レイヤー：背景アイコン === */}
+        {/* ここにCSSだけで背景を指定する */}
         <div 
-          className="absolute inset-0 z-0 bg-no-repeat bg-center bg-contain opacity-5 pointer-events-none"
-          style={{ backgroundImage: 'var(--bg-icon-url)' }}
+          style={{
+            position: 'fixed',
+            inset: '0px',
+            zIndex: -1, // ★★★ コンテンツの後ろに配置するため-1にする ★★★
+            backgroundImage: `url('/icon.png')`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center',
+            backgroundSize: 'contain',
+            opacity: 0.05, // 5%
+            pointerEvents: 'none',
+          }}
         ></div>
 
-        <div className="relative z-10">
-          <header className="bg-slate-800/80 backdrop-blur-sm shadow-md sticky top-0">
-            <nav className="container mx-auto px-6 py-4">
-              
-              {/* ★★★ ここからが修正箇所 ★★★ */}
-              <Link href="/" className="inline-flex items-center gap-4 group">
+        {/* === 高レイヤー：コンテンツ本体 (z-indexは不要) === */}
+        <div>
+          <header style={{ backgroundColor: 'rgba(30, 41, 59, 0.8)', backdropFilter: 'blur(4px)', position: 'sticky', top: '0' }}>
+            <nav style={{ maxWidth: '1280px', margin: 'auto', padding: '1rem 1.5rem' }}>
+              <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem' }}>
                 <Image
-                  src="/icon.png" // ご指定のパスに変更
-                  alt="utalog icon" // altテキストを分かりやすく変更
+                  src="/icon.png"
+                  alt="utalog icon"
                   width={48}
                   height={48}
                   priority
-                  className="group-hover:scale-110 transition-transform duration-200" // ホバーエフェクトを追加
                 />
+                <span style={{ fontSize: '1.5rem', fontWeight: '700', color: 'white' }}>
+                  utalog
+                </span>
               </Link>
-              {/* ★★★ ここまで ★★★ */}
-              
             </nav>
           </header>
-          <main className="container mx-auto p-6">
+          <main style={{ maxWidth: '1280px', margin: 'auto', padding: '1.5rem' }}>
             {children}
           </main>
         </div>
+        
       </body>
     </html>
   );

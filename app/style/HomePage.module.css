@@ -1,0 +1,64 @@
+/* ... HomePage.module.css ... */
+
+.title {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  /* background-image: linear-gradient(to right, #38bdf8, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text; */
+  color: #ffffff; /* ★★★ 文字色を黒に ★★★ */
+}
+
+/* ... */
+
+.songTitle div {
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  color: #cbd5e1; /* 通常時の色を明るいグレーに (text-slate-300相当) */
+  transition: color 200ms;
+}
+
+.songTitle a:hover div {
+  color: #38bdf8; /* ホバー時の色を明るい水色に (hover:text-sky-400相当) */
+}
+
+.artistName {
+  font-size: 0.875rem;
+  /* color: rgb(148 163 184); <-- この行をコメントアウト or 削除 */
+}
+
+/* ... */
+
+.date {
+  font-size: 0.875rem;
+  /* color: rgb(148 163 184); <-- この行をコメントアウト or 削除 */
+}
+.exportButton {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #10B981;
+  color: white;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.exportButton:hover {
+  background-color: #059669;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transform: scale(1.1);
+}
+
+/* ★★★ このルールがSVGアイコンのサイズを決定します ★★★ */
+.exportButton svg {
+  width: 24px;
+  height: 24px;
+}
