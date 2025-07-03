@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const [songs, setSongs] = useState([]);
+  // stateの名前を 'songs' から 'history' に変更して分かりやすく
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: 'latestDate', direction: 'desc' });
+  // 初期ソートキーを 'date' (日付) に
+  const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
 
   useEffect(() => {
     fetch('/api/songs')
@@ -16,50 +18,33 @@ export default function HomePage() {
         return res.json();
       })
       .then(data => {
-        const historyWithDateObjects = data.map(item => ({
+        // ★★★ 曲ごとの集計ロジックを完全に削除 ★★★
+        // APIから取得したデータをそのままstateにセットする
+        const formattedHistory = data.map(item => ({
           ...item,
+          // ソートや表示のためにDateオブジェクトに変換
           date: new Date(item.date),
         }));
-        
-        const songMap = new Map();
-        historyWithDateObjects.forEach(item => {
-          if (!songMap.has(item.title)) {
-            songMap.set(item.title, {
-              id: item.id,
-              title: item.title,
-              artist: item.artist,
-              highestScore: 0,
-              latestDate: new Date('1970-01-01'),
-              count: 0, // ★★★ 歌唱回数用のプロパティを初期化 ★★★
-            });
-          }
-          const existing = songMap.get(item.title);
-          
-          existing.count++; // ★★★ カウントをインクリメント ★★★
-
-          if (item.score > existing.highestScore) {
-            existing.highestScore = item.score;
-          }
-          if (item.date > existing.latestDate) {
-            existing.latestDate = item.date;
-          }
-        });
-
-        const finalSongs = Array.from(songMap.values()).map(song => ({
-            ...song,
-            latestDate: song.latestDate.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(/\//g, '/'),
-        }));
-
-        setSongs(finalSongs);
+        setHistory(formattedHistory);
         setLoading(false);
       })
       .catch(err => { setError(err.message); setLoading(false); });
   }, []);
   
-  const sortedSongs = [...songs].sort((a, b) => {
+  // ソートロジック
+  const sortedHistory = [...history].sort((a, b) => {
     const key = sortConfig.key;
     const direction = sortConfig.direction === 'asc' ? 1 : -1;
-    const aValue = a[key]; const bValue = b[key];
+    
+    let aValue = a[key];
+    let bValue = b[key];
+
+    // 文字列の場合は小文字にして比較（大文字小文字を区別しない）
+    if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+    }
+
     if (aValue < bValue) return -1 * direction;
     if (aValue > bValue) return 1 * direction;
     return 0;
@@ -67,7 +52,9 @@ export default function HomePage() {
 
   const requestSort = (key) => {
     let direction = 'desc';
-    if (sortConfig.key === key && sortConfig.direction === 'desc') direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = 'asc';
+    }
     setSortConfig({ key, direction });
   };
   
@@ -96,6 +83,7 @@ export default function HomePage() {
 
       <div className="bg-slate-800/50 backdrop-blur-sm shadow-2xl rounded-xl overflow-hidden border border-slate-700">
         <table className="min-w-full">
+          {/* ★★★ テーブルヘッダーを「一採点一表示」用に変更 ★★★ */}
           <thead className="bg-slate-900/70">
             <tr>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider cursor-pointer" onClick={() => requestSort('title')}>
@@ -104,37 +92,34 @@ export default function HomePage() {
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider cursor-pointer" onClick={() => requestSort('artist')}>
                 アーティスト名 {getSortIndicator('artist')}
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider cursor-pointer" onClick={() => requestSort('highestScore')}>
-                最高点 {getSortIndicator('highestScore')}
+              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider cursor-pointer" onClick={() => requestSort('score')}>
+                スコア {getSortIndicator('score')}
               </th>
-              {/* ★★★ 歌唱回数のヘッダーを追加 ★★★ */}
-              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider cursor-pointer" onClick={() => requestSort('count')}>
-                歌唱回数 {getSortIndicator('count')}
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider cursor-pointer" onClick={() => requestSort('latestDate')}>
-                最終歌唱日 {getSortIndicator('latestDate')}
+              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider cursor-pointer" onClick={() => requestSort('date')}>
+                歌唱日時 {getSortIndicator('date')}
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700">
-            {sortedSongs.map(song => (
-              <tr key={song.id} className="hover:bg-sky-900/20 transition-colors duration-200">
+            {/* ★★★ 個別の履歴を1行ずつ表示 ★★★ */}
+            {sortedHistory.map(item => (
+              <tr key={item.id} className="hover:bg-sky-900/20 transition-colors duration-200">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Link href={`/song/${encodeURIComponent(song.title)}`} className="group">
-                    <div className="text-base font-medium text-slate-100 group-hover:text-sky-400 transition-colors">{song.title}</div>
+                  {/* 詳細ページへのリンクは保持 */}
+                  <Link href={`/song/${encodeURIComponent(item.title)}`} className="group">
+                    <div className="text-base font-medium text-slate-100 group-hover:text-sky-400 transition-colors">{item.title}</div>
                   </Link>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
-                  {song.artist}
+                  {item.artist}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`text-xl font-mono font-bold ${getScoreColor(song.highestScore)}`}>{song.highestScore.toFixed(3)}</span>
+                  <span className={`text-xl font-mono font-bold ${getScoreColor(item.score)}`}>{item.score.toFixed(3)}</span>
                 </td>
-                {/* ★★★ 歌唱回数のセルを追加 ★★★ */}
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-slate-300">
-                  {song.count} 回
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  {/* toLocaleStringで日付を読みやすい形式に変換 */}
+                  {item.date.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{song.latestDate}</td>
               </tr>
             ))}
           </tbody>
