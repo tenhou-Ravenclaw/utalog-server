@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import styles from './style/HomePage.module.css';
+import styles from './HomePage.module.css';
 
 export default function HomePage() {
   const [history, setHistory] = useState([]);
