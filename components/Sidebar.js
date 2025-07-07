@@ -7,7 +7,7 @@ import styles from './Sidebar.module.css';
 // メニューの項目
 const menuItems = [
     { href: '/ai-heart', label: '精密採点Ai Heart' }, // 新しい項目
-  { href: '/', label: '精密採点Ai' },
+  { href: '/ai', label: '精密採点Ai' },
   { href: '/dx-g', label: '精密採点DX-G' }, // 将来の拡張用
   { href: '/dx', label: '精密採点DX' },   // 将来の拡張用
 ];
