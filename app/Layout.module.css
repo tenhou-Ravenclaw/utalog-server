@@ -1,0 +1,81 @@
+/* app/Layout.module.css */
+
+.body {
+  position: relative;
+  min-height: 100vh;
+}
+
+.backgroundIcon {
+  position: fixed;
+  inset: 0px;
+  z-index: -1;
+  background-image: url('/icon.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.header {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+}
+
+.nav {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hamburgerButton {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  /* メニューボタンは常に表示され、動かない */
+  z-index: 10; /* ロゴより手前に表示 */
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  /* ★★★ アニメーションのための設定を復活 ★★★ */
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(0);
+}
+
+/* ★★★ サイドバーが開いている時はロゴを右に移動させるクラスを復活 ★★★ */
+.logoLink.shifted {
+  transform: translateX(calc(250px - 40px)); /* サイドバー幅 - ボタンとgapの幅 */
+}
+
+.logoTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.mainContent {
+  padding-top: 80px;
+  padding-right: 1.5rem;
+  padding-bottom: 1.5rem;
+  transition: padding-left 0.3s ease-in-out;
+}

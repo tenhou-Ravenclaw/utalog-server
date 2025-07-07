@@ -3,25 +3,28 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Sidebar.module.css';
-import Image from 'next/image';
 
+// メニューの項目
 const menuItems = [
+    { href: '/ai-heart', label: '精密採点Ai Heart' }, // 新しい項目
   { href: '/', label: '精密採点Ai' },
-  // { href: '/dx-g', label: '精密採点DX-G' },
-  // { href: '/dx', label: '精密採点DX' },
+  { href: '/dx-g', label: '精密採点DX-G' }, // 将来の拡張用
+  { href: '/dx', label: '精密採点DX' },   // 将来の拡張用
 ];
 
-export default function Sidebar() {
+// propsとして isOpen と closeSidebar を受け取る
+export default function Sidebar({ isOpen, closeSidebar }) {
   const pathname = usePathname();
 
-  return (
-    <aside className={styles.sidebar}>
-      {/* サイドバー上部にロゴとタイトルを配置 */}
-      <div className={styles.sidebarHeader}>
-        <Image src="/icon.png" alt="utalog icon" width={40} height={40} />
-        <span className={styles.sidebarTitle}>Uta-Log</span>
-      </div>
+  // メニュー項目をクリックしたときの処理
+  const handleLinkClick = () => {
+    // サイドバーを閉じる（スマホ表示などで便利）
+    closeSidebar();
+  };
 
+  return (
+    // isOpen の状態に応じてスタイルを動的に変更
+    <aside className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}>
       <nav>
         <h2 className={styles.menuTitle}>採点方式</h2>
         <ul>
@@ -30,6 +33,7 @@ export default function Sidebar() {
               <Link 
                 href={item.href} 
                 className={`${styles.menuLink} ${pathname === item.href ? styles.active : ''}`}
+                onClick={handleLinkClick}
               >
                 {item.label}
               </Link>
