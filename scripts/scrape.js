@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 // --- 設定 ---
 const CDM_CARD_NO = process.env.DAM_CDM_CARD_NO;
 const API_URL = 'https://www.clubdam.com/app/damtomo/scoring/GetScoringAiListXML.do';
-const MAX_ITEMS = 50;
+const MAX_ITEMS = 200;
 
 // ... (parseDamDateTime, convertDamData, getMeta は変更なし) ...
 function parseDamDateTime(dateTimeStr) {
