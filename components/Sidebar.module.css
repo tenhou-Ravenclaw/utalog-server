@@ -1,0 +1,59 @@
+/* components/Sidebar.module.css */
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed; /* 画面に固定 */
+  top: 0;
+  left: 0;
+  z-index: 50; /* ヘッダーより手前 */
+  background-color: rgba(255, 255, 255, 0.9); /* 半透明の白 */
+  backdrop-filter: blur(10px);
+  border-right: 1px solid #e2e8f0;
+  padding: 1.5rem;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  padding-left: 0.5rem;
+}
+
+.sidebarTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.menuTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  padding: 0 1rem;
+}
+
+.menuLink {
+  display: block;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #334155;
+  transition: all 0.2s;
+}
+
+.menuLink:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.menuLink.active {
+  background-color: #0ea5e9;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}

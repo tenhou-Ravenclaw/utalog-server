@@ -1,5 +1,13 @@
 /* app/globals.css */
+
+/* Tailwindの命令は不要なので削除されたまま */
+
+html {
+  background-color: #f1f5f9; /* アプリ全体の背景色をここに設定 */
+}
+
 body {
-  background-color: #f1f5f9; /* 明るいグレーの背景色 */
-  color: #1e293b; /* デフォルトの文字色 */
+  color: #1e293b;
+  margin: 0; /* ブラウザのデフォルトマージンをリセット */
+  font-family: sans-serif; /* 基本フォントを指定 */
 }
