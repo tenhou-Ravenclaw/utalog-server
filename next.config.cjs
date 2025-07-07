@@ -1,15 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // ★★★ リダイレクト設定を追加 ★★★
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/ai',
-        permanent: true,
-      },
-    ]
-  },
-};
+const nextConfig = {};
 
 module.exports = nextConfig;
