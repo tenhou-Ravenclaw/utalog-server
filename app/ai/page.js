@@ -67,7 +67,7 @@ export default function HomePage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>楽曲一覧</h1>
+        <h1 className={styles.title}>精密採点AI 歌唱楽曲一覧</h1>
       </div>
 
       <div className={styles.tableContainer}>
