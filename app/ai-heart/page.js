@@ -65,7 +65,7 @@ export default function AIHeartPage() {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1 className={styles.title}>AI Heart採点 楽曲一覧</h1>
+                <h1 className={styles.title}>AI Heart採点 歌唱楽曲一覧</h1>
                 <p className={styles.subtitle}>精密採点AI Heartの歌唱履歴</p>
             </div>
 
