@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import styles from '../ai/HomePage.module.css';
+import styles from './/HomePage.module.css';
 
 export default function AIHeartPage() {
     const [history, setHistory] = useState([]);
@@ -66,7 +66,6 @@ export default function AIHeartPage() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1 className={styles.title}>AI Heart採点 歌唱楽曲一覧</h1>
-                <p className={styles.subtitle}>精密採点AI Heartの歌唱履歴</p>
             </div>
 
             <div className={styles.tableContainer}>
