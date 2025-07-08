@@ -25,8 +25,8 @@ function parseDamDateTime(dateTimeStr) {
 
 function convertDamData(xmlData) {
   if (!xmlData.document.list || !xmlData.document.list[0].data) return [];
-  const items = Array.isArray(xmlData.document.list[0].data) 
-    ? xmlData.document.list[0].data 
+  const items = Array.isArray(xmlData.document.list[0].data)
+    ? xmlData.document.list[0].data
     : [xmlData.document.list[0].data];
   return items.map(d => {
     const attributes = d.scoring[0].$;
@@ -54,10 +54,10 @@ async function main() {
     console.error('エラー: .env ファイルに DAM_CDM_CARD_NO を設定してください。');
     return;
   }
-  
+
   console.log('--- utalog データ更新開始 (最新5件比較・最適化版) ---');
 
-  const latestDbRecords = await prisma.songHistory.findMany({
+  const latestDbRecords = await prisma.aISongHistory.findMany({
     take: 5,
     orderBy: { date: 'desc' },
     select: { id: true, score: true },
@@ -66,7 +66,7 @@ async function main() {
 
   let firstPageResults = [];
   try {
-    const response = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: 1 }});
+    const response = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: 1 } });
     const parser = new xml2js.Parser();
     const resultJson = await parser.parseStringPromise(response.data);
     firstPageResults = convertDamData(resultJson);
@@ -74,13 +74,13 @@ async function main() {
     console.error('APIからの初回データ取得に失敗しました。', error.message);
     return;
   }
-  
-  const isUpToDate = firstPageResults.length > 0 && 
-                     latestDbRecords.length >= firstPageResults.length &&
-                     firstPageResults.every(apiRecord => 
-                        dbRecordMap.has(apiRecord.id) && dbRecordMap.get(apiRecord.id) === apiRecord.score
-                     );
-  
+
+  const isUpToDate = firstPageResults.length > 0 &&
+    latestDbRecords.length >= firstPageResults.length &&
+    firstPageResults.every(apiRecord =>
+      dbRecordMap.has(apiRecord.id) && dbRecordMap.get(apiRecord.id) === apiRecord.score
+    );
+
   if (isUpToDate) {
     console.log('データベースは最新の状態です。更新は不要です。');
     return;
@@ -95,7 +95,7 @@ async function main() {
   while (allNewData.length < MAX_ITEMS && hasNext && !shouldStop) {
     const pageResults = (currentPage === 1) ? firstPageResults : await (async () => {
       try {
-        const response = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: currentPage }});
+        const response = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: currentPage } });
         const parser = new xml2js.Parser();
         const resultJson = await parser.parseStringPromise(response.data);
         return convertDamData(resultJson);
@@ -105,7 +105,7 @@ async function main() {
     if (pageResults.length === 0) break;
 
     for (const item of pageResults) {
-      const existingRecord = await prisma.songHistory.findUnique({ where: { id: item.id } });
+      const existingRecord = await prisma.aISongHistory.findUnique({ where: { id: item.id } });
       if (existingRecord) {
         shouldStop = true;
         break;
@@ -113,13 +113,13 @@ async function main() {
         allNewData.push(item);
       }
     }
-    
+
     if (!shouldStop) {
-        const metaResponse = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: currentPage }});
-        const parser = new xml2js.Parser();
-        const metaJson = await parser.parseStringPromise(metaResponse.data);
-        hasNext = getMeta(metaJson).hasNext;
-        currentPage++;
+      const metaResponse = await axios.get(API_URL, { params: { cdmCardNo: CDM_CARD_NO, pageNo: currentPage } });
+      const parser = new xml2js.Parser();
+      const metaJson = await parser.parseStringPromise(metaResponse.data);
+      hasNext = getMeta(metaJson).hasNext;
+      currentPage++;
     }
   }
 
@@ -127,10 +127,10 @@ async function main() {
     console.log('（詳細チェックの結果）新しいデータはありませんでした。');
     return;
   }
-  
+
   const finalData = allNewData.slice(0, MAX_ITEMS);
   console.log(`APIから新たに${finalData.length}件のデータを取得しました。データベースに書き込みます...`);
-  
+
   // ★★★ ここからが修正箇所 ★★★
   let processedCount = 0;
   // createManyの代わりに、1件ずつupsertを実行するループ処理に変更
@@ -138,7 +138,7 @@ async function main() {
     // 不正なデータはスキップ
     if (!item.id || !item.date || isNaN(item.score)) continue;
 
-    await prisma.songHistory.upsert({
+    await prisma.aISongHistory.upsert({
       where: { id: item.id },
       // 既存のレコードが見つかった場合の更新内容
       update: {
@@ -156,7 +156,7 @@ async function main() {
     });
     processedCount++;
   }
-  
+
   console.log(`データベースの更新が完了しました。（${processedCount}件処理）`);
 }
 

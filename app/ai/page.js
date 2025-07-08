@@ -11,7 +11,7 @@ export default function HomePage() {
   const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
 
   useEffect(() => {
-    fetch('/api/songs')
+    fetch('/api/songs/ai')
       .then(res => {
         if (!res.ok) throw new Error('データベースからのデータ取得に失敗しました。');
         return res.json();
@@ -29,13 +29,13 @@ export default function HomePage() {
       })
       .catch(err => { setError(err.message); setLoading(false); });
   }, []);
-  
+
   const sortedHistory = [...history].sort((a, b) => {
     const key = sortConfig.key;
     const direction = sortConfig.direction === 'asc' ? 1 : -1;
     let aValue = a[key]; let bValue = b[key];
     if (typeof aValue === 'string') {
-        aValue = aValue.toLowerCase(); bValue = bValue.toLowerCase();
+      aValue = aValue.toLowerCase(); bValue = bValue.toLowerCase();
     }
     if (aValue < bValue) return -1 * direction;
     if (aValue > bValue) return 1 * direction;
@@ -47,7 +47,7 @@ export default function HomePage() {
     if (sortConfig.key === key && sortConfig.direction === 'desc') direction = 'asc';
     setSortConfig({ key, direction });
   };
-  
+
   const getSortIndicator = (key) => {
     if (sortConfig.key !== key) return '↕';
     return sortConfig.direction === 'desc' ? '▼' : '▲';
