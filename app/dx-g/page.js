@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './HomePage.module.css';
-import Sidebar from '@/components/Sidebar';
 
 export default function DXGPage() {
     const [songs, setSongs] = useState([]);
@@ -15,7 +14,7 @@ export default function DXGPage() {
             try {
                 const response = await fetch('/api/songs/dxg');
                 if (!response.ok) {
-                    throw new Error('データの取得に失敗しました');
+                    throw new Error('DX-G採点データの取得に失敗しました');
                 }
                 const data = await response.json();
                 setSongs(data);
@@ -47,7 +46,6 @@ export default function DXGPage() {
     if (loading) {
         return (
             <div className={styles.container}>
-                <Sidebar />
                 <main className={styles.main}>
                     <div className={styles.loading}>読み込み中...</div>
                 </main>
@@ -58,7 +56,6 @@ export default function DXGPage() {
     if (error) {
         return (
             <div className={styles.container}>
-                <Sidebar />
                 <main className={styles.main}>
                     <div className={styles.error}>エラー: {error}</div>
                 </main>
@@ -68,12 +65,10 @@ export default function DXGPage() {
 
     return (
         <div className={styles.container}>
-            <Sidebar />
             <main className={styles.main}>
                 <div className={styles.header}>
                     <h1 className={styles.title}>
-                        精密採点DX-G 歌唱履歴
-                        <span className={styles.scoringBadge}>DX-G</span>
+                        精密採点DX-G 歌唱楽曲一覧
                     </h1>
                     <div className={styles.stats}>
                         <div className={styles.statItem}>
