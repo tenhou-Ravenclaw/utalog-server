@@ -1,0 +1,134 @@
+/* HomePage.module.css (白背景バージョン) */
+
+.container {
+  padding-bottom: 6rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e293b; /* text-slate-800 */
+}
+
+/* ★★★ テーブルコンテナのスタイルを詳細ページと合わせる ★★★ */
+.tableContainer {
+  /* background-color を削除し、background プロパティで直接指定 */
+  background: rgba(255, 255, 255, 0.65); /* 65%の不透明度 (より濃く) */
+  
+  /* backdrop-filter を削除 */
+  
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.table {
+  min-width: 100%;
+}
+
+.tableHead {
+  /* background-color: #f8fafc; を半透明に変更 */
+  background-color: rgba(248, 250, 252, 0.75); /* bg-slate-50 の75%不透明度版 */
+}
+
+.th {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b; /* text-slate-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.tableBody tr:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tr:hover {
+  /* background-color: #f1f5f9; を半透明に変更 */
+  background-color: rgba(241, 245, 249, 0.6); /* hover:bg-slate-100 の85%不透明度版 */
+}
+
+.td {
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
+}
+
+/* ★★★ 各セルの文字色などを調整 ★★★ */
+.songTitle div {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1e293b; /* text-slate-800 */
+  transition: color 200ms;
+}
+.songTitle a:hover div {
+  color: #0ea5e9; /* hover:text-sky-500 */
+}
+
+.artistName {
+  font-size: 0.875rem;
+  color: #475569; /* text-slate-600 */
+}
+
+.score {
+  font-size: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 700;
+}
+/* スコアの色分けはそのまま活かす */
+.score.high { color: #eab308; } /* 90-95 */
+.score.very-high { color: #0ea5e9; } /* 85-90 */
+.score.rainbow {
+  background-image: linear-gradient(to right, #facc15, #ec4899, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+
+.date {
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.count {
+    font-size: 1rem;
+    text-align: center;
+    color: #475569;
+}
+
+/* ★★★ エクスポートボタンも白背景に合うように調整 ★★★ */
+.exportButton {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #5dc354; /* 濃い紺色 */
+  color: white;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transition: all 0.2s ease-in-out;
+}
+.exportButton:hover {
+  background-color: #5dc354; /* 少し明るい紺色 */
+  transform: scale(1.1);
+}
+.exportButton svg {
+  width: 24px;
+  height: 24px;
+}

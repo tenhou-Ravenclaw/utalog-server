@@ -8,10 +8,9 @@ const prisma = new PrismaClient();
 
 // --- 設定 ---
 const CDM_CARD_NO = process.env.DAM_CDM_CARD_NO;
-const API_URL = 'https://www.clubdam.com/app/damtomo/scoring/GetScoringAiListXML.do';
+const API_URL = 'https://www.clubdam.com/app/damtomo/scoring/GetScoringHeartsListXML.do';
 const MAX_ITEMS = 200;
 
-// ... (parseDamDateTime, convertDamData, getMeta は変更なし) ...
 function parseDamDateTime(dateTimeStr) {
     if (!dateTimeStr || dateTimeStr.length < 14) return null;
     const year = parseInt(dateTimeStr.substring(0, 4), 10);
@@ -28,13 +27,14 @@ function convertDamData(xmlData) {
     const items = Array.isArray(xmlData.document.list[0].data)
         ? xmlData.document.list[0].data
         : [xmlData.document.list[0].data];
+    
     return items.map(d => {
-        const attributes = d.scoring[0].$;
-        const scoreValue = d.scoring[0]._;
+        const attributes = d.scoringHearts[0].$;
+        const scoreValue = d.scoringHearts[0]._;
         const normalizedScore = parseFloat(scoreValue) / 1000;
         return {
-            id: attributes.scoringAiId,
-            title: attributes.contentsName,
+            id: attributes.scoringHeartsHistoryId,
+            title: attributes.songName,
             artist: attributes.artistName,
             score: isNaN(normalizedScore) ? 0 : normalizedScore,
             date: parseDamDateTime(attributes.scoringDateTime),
@@ -43,21 +43,28 @@ function convertDamData(xmlData) {
 }
 
 function getMeta(xmlData) {
-    const page = xmlData.document.data[0].page[0];
-    return { hasNext: page.$.hasNext === '1' };
+    try {
+        if (!xmlData.document || !xmlData.document.data || !xmlData.document.data[0] || !xmlData.document.data[0].page || !xmlData.document.data[0].page[0]) {
+            console.log('getMeta: 期待されるページ構造が見つかりません');
+            return { hasNext: false };
+        }
+        const page = xmlData.document.data[0].page[0];
+        return { hasNext: page.$.hasNext === '1' };
+    } catch (error) {
+        console.log('getMeta エラー:', error.message);
+        return { hasNext: false };
+    }
 }
 
-
 async function main() {
-    // ... (main関数前半のデータ取得ロジックは変更なし) ...
     if (!CDM_CARD_NO || CDM_CARD_NO === '0000000000') {
         console.error('エラー: .env ファイルに DAM_CDM_CARD_NO を設定してください。');
         return;
     }
 
-    console.log('--- AI採点データ更新開始 (最新5件比較・最適化版) ---');
+    console.log('--- AI Heart採点データ更新開始 (最新5件比較・最適化版) ---');
 
-    const latestDbRecords = await prisma.aISongHistory.findMany({
+    const latestDbRecords = await prisma.aIHeartSongHistory.findMany({
         take: 5,
         orderBy: { date: 'desc' },
         select: { id: true, score: true },
@@ -105,7 +112,7 @@ async function main() {
         if (pageResults.length === 0) break;
 
         for (const item of pageResults) {
-            const existingRecord = await prisma.aISongHistory.findUnique({ where: { id: item.id } });
+            const existingRecord = await prisma.aIHeartSongHistory.findUnique({ where: { id: item.id } });
             if (existingRecord) {
                 shouldStop = true;
                 break;
@@ -131,19 +138,17 @@ async function main() {
     const finalData = allNewData.slice(0, MAX_ITEMS);
     console.log(`APIから新たに${finalData.length}件のデータを取得しました。データベースに書き込みます...`);
 
-    // ★★★ ここからが修正箇所 ★★★
     let processedCount = 0;
-    // createManyの代わりに、1件ずつupsertを実行するループ処理に変更
     for (const item of finalData) {
         // 不正なデータはスキップ
         if (!item.id || !item.date || isNaN(item.score)) continue;
 
-        await prisma.aISongHistory.upsert({
+        await prisma.aIHeartSongHistory.upsert({
             where: { id: item.id },
             // 既存のレコードが見つかった場合の更新内容
             update: {
                 score: item.score,
-                date: item.date, // 日時も更新される可能性があるため
+                date: item.date,
             },
             // 新規レコードの場合の作成内容
             create: {
@@ -157,7 +162,7 @@ async function main() {
         processedCount++;
     }
 
-    console.log(`AI採点データベースの更新が完了しました。（${processedCount}件処理）`);
+    console.log(`AI Heart採点データベースの更新が完了しました。（${processedCount}件処理）`);
 }
 
 main()
