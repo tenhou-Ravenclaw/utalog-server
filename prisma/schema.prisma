@@ -10,14 +10,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model SongHistory {
-  id              String   @id @unique
-  title           String
-  artist          String
-  score           Float
-  date            DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+model ScoringType {
+  id          String        @id @unique
+  name        String        @unique
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// AI採点専用テーブル
+model AISongHistory {
+  id        String   @id @unique
+  title     String
+  artist    String
+  score     Float
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([date])
+  @@index([title])
+  @@map("ai_song_histories")
+}
+
+// 精密採点DX-G専用テーブル
+model DXGSongHistory {
+  id        String   @id @unique
+  title     String
+  artist    String
+  score     Float
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+  @@index([title])
+  @@map("dxg_song_histories")
+}
+
+// AI Heart採点専用テーブル
+model AIHeartSongHistory {
+  id        String   @id @unique
+  title     String
+  artist    String
+  score     Float
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+  @@index([title])
+  @@map("ai_heart_song_histories")
 }
