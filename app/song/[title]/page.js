@@ -21,7 +21,12 @@ export default function SongDetailPage() {
       .then(allData => {
         const filteredData = allData
           .filter(item => item.title === title)
-          .map(item => ({...item, date: new Date(item.date)}))
+          .map(item => ({
+            ...item,
+            date: new Date(item.date),
+            // 採点方法がない場合はレガシーデータとして扱う
+            scoringMethod: item.scoringMethod || 'レガシー'
+          }))
           .sort((a, b) => a.date - b.date);
 
         setSongData(filteredData);
@@ -33,6 +38,20 @@ export default function SongDetailPage() {
 
   const artist = songData.length > 0 ? songData[0].artist : '';
 
+  // 採点方法の色を取得する関数
+  const getScoringMethodColor = (method) => {
+    switch (method) {
+      case 'AI採点':
+        return '#0ea5e9'; // 青系
+      case 'AI Heart採点':
+        return '#e91e63'; // ピンク系
+      case '精密採点DX-G':
+        return '#10b981'; // 緑系
+      default:
+        return '#64748b'; // グレー系
+    }
+  };
+
   // ★★★ 1. スコアの色分け関数をここにも追加 ★★★
   const getScoreClassName = (score) => {
     let classNames = [styles.score]; // 基本クラス
@@ -42,8 +61,8 @@ export default function SongDetailPage() {
     return classNames.join(' ');
   };
 
-  if (loading) return <div style={{textAlign: 'center', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'}}>読み込み中...</div>;
-  if (error) return <div style={{textAlign: 'center', color: 'red'}}>{error}</div>;
+  if (loading) return <div style={{ textAlign: 'center', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>読み込み中...</div>;
+  if (error) return <div style={{ textAlign: 'center', color: 'red' }}>{error}</div>;
 
   return (
     <div className={styles.container}>
@@ -66,6 +85,7 @@ export default function SongDetailPage() {
           <thead className={styles.tableHead}>
             <tr>
               <th className={styles.th}>歌唱日時</th>
+              <th className={styles.th}>採点方法</th>
               <th className={styles.th}>スコア</th>
             </tr>
           </thead>
@@ -76,6 +96,14 @@ export default function SongDetailPage() {
                   <div className={styles.date}>
                     {item.date.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
                   </div>
+                </td>
+                <td className={styles.td}>
+                  <span
+                    className={styles.scoringMethod}
+                    style={{ color: getScoringMethodColor(item.scoringMethod) }}
+                  >
+                    {item.scoringMethod}
+                  </span>
                 </td>
                 <td className={styles.td}>
                   {/* ★★★ 2. 動的なクラス名を適用 ★★★ */}
