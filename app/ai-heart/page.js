@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './/HomePage.module.css';
+import { generateSongUrl } from '../../lib/songUtils';
 
 export default function AIHeartPage() {
     const [history, setHistory] = useState([]);
@@ -82,7 +83,7 @@ export default function AIHeartPage() {
                         {sortedHistory.map(item => (
                             <tr key={item.id} className={styles.tr}>
                                 <td className={styles.td}>
-                                    <Link href={`/song/${encodeURIComponent(item.title)}`} className={styles.songTitle}>
+                                    <Link href={`/song/${generateSongUrl(item.title)}`} className={styles.songTitle}>
                                         <div>{item.title}</div>
                                     </Link>
                                 </td>

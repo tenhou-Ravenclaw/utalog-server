@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './HomePage.module.css';
+import { generateSongUrl } from '../../lib/songUtils';
 
 export default function DXGPage() {
     const [songs, setSongs] = useState([]);
@@ -105,7 +106,7 @@ export default function DXGPage() {
                             <div key={`${song.id}-${index}`} className={styles.songCard}>
                                 <div className={styles.songInfo}>
                                     <h3 className={styles.songTitle}>
-                                        <Link href={`/song/${encodeURIComponent(song.title)}`}>
+                                        <Link href={`/song/${generateSongUrl(song.title)}`}>
                                             {song.title}
                                         </Link>
                                     </h3>

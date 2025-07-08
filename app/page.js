@@ -3,19 +3,26 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function HomePage() {
+export default function RootPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // ページがマウントされたらすぐにAIページにリダイレクト
-        router.push('/ai');
+        // ページが読み込まれたらすぐにAIページにリダイレクト
+        router.replace('/ai');
     }, [router]);
 
-    // リダイレクト中の表示（一瞬だけ表示される）
+    // リダイレクト中の表示
     return (
-        <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <h1>リダイレクト中...</h1>
-            <p>しばらくお待ちください。</p>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            fontSize: '1.2rem'
+        }}>
+            AIページにリダイレクト中...
         </div>
     );
 }
