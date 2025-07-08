@@ -1,206 +1,134 @@
-/* AI Heart採点ページ専用のスタイル */
+/* HomePage.module.css (白背景バージョン) */
+
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+  padding-bottom: 6rem;
 }
 
 .header {
-    margin-bottom: 2rem;
-    text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #e91e63, #9c27b0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e293b; /* text-slate-800 */
 }
 
-.subtitle {
-    font-size: 1rem;
-    color: #64748b;
-    margin: 0;
-}
-
+/* ★★★ テーブルコンテナのスタイルを詳細ページと合わせる ★★★ */
 .tableContainer {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
+  /* background-color を削除し、background プロパティで直接指定 */
+  background: rgba(255, 255, 255, 0.65); /* 65%の不透明度 (より濃く) */
+  
+  /* backdrop-filter を削除 */
+  
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.4);
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
+  min-width: 100%;
 }
 
 .tableHead {
-    background: linear-gradient(135deg, #e91e63, #9c27b0);
-    color: white;
+  /* background-color: #f8fafc; を半透明に変更 */
+  background-color: rgba(248, 250, 252, 0.75); /* bg-slate-50 の75%不透明度版 */
 }
 
 .th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    user-select: none;
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b; /* text-slate-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
 }
 
-.th:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.tableBody {
-    background: white;
-}
-
-.tr {
-    border-bottom: 1px solid #e2e8f0;
-    transition: background-color 0.2s;
+.tableBody tr:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .tr:hover {
-    background-color: #f8fafc;
-}
-
-.tr:last-child {
-    border-bottom: none;
+  /* background-color: #f1f5f9; を半透明に変更 */
+  background-color: rgba(241, 245, 249, 0.6); /* hover:bg-slate-100 の85%不透明度版 */
 }
 
 .td {
-    padding: 1rem;
-    vertical-align: middle;
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
 }
 
-.songTitle {
-    color: #1e293b;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
+/* ★★★ 各セルの文字色などを調整 ★★★ */
+.songTitle div {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1e293b; /* text-slate-800 */
+  transition: color 200ms;
 }
-
-.songTitle:hover {
-    color: #e91e63;
+.songTitle a:hover div {
+  color: #0ea5e9; /* hover:text-sky-500 */
 }
 
 .artistName {
-    color: #64748b;
-    font-size: 0.9rem;
+  font-size: 0.875rem;
+  color: #475569; /* text-slate-600 */
 }
 
 .score {
-    font-weight: 700;
-    font-size: 1.1rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    display: inline-block;
-    min-width: 4rem;
-    text-align: center;
+  font-size: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 700;
 }
-
+/* スコアの色分けはそのまま活かす */
+.score.high { color: #eab308; } /* 90-95 */
+.score.very-high { color: #0ea5e9; } /* 85-90 */
 .score.rainbow {
-    background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #f0932b, #eb4d4b, #6c5ce7);
-    background-size: 400% 400%;
-    animation: rainbow 3s ease infinite;
-    color: white;
-    font-weight: 800;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  background-image: linear-gradient(to right, #facc15, #ec4899, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.score.high {
-    background: linear-gradient(135deg, #e91e63, #9c27b0);
-    color: white;
-}
-
-.score.veryHigh {
-    background: linear-gradient(135deg, #ff9800, #f44336);
-    color: white;
-}
 
 .date {
-    color: #64748b;
-    font-size: 0.9rem;
-    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.875rem;
+  color: #475569;
 }
 
+.count {
+    font-size: 1rem;
+    text-align: center;
+    color: #475569;
+}
+
+/* ★★★ エクスポートボタンも白背景に合うように調整 ★★★ */
 .exportButton {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 3.5rem;
-    height: 3.5rem;
-    background: linear-gradient(135deg, #e91e63, #9c27b0);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-decoration: none;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    transition: all 0.2s;
-    z-index: 10;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #5dc354; /* 濃い紺色 */
+  color: white;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transition: all 0.2s ease-in-out;
 }
-
 .exportButton:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+  background-color: #5dc354; /* 少し明るい紺色 */
+  transform: scale(1.1);
 }
-
 .exportButton svg {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-@keyframes rainbow {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
-
-    .title {
-        font-size: 2rem;
-    }
-
-    .table {
-        font-size: 0.9rem;
-    }
-
-    .th,
-    .td {
-        padding: 0.75rem;
-    }
-
-    .exportButton {
-        bottom: 1rem;
-        right: 1rem;
-        width: 3rem;
-        height: 3rem;
-    }
-
-    .exportButton svg {
-        width: 1.25rem;
-        height: 1.25rem;
-    }
+  width: 24px;
+  height: 24px;
 }
