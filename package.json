@@ -10,7 +10,8 @@
         "lint": "next lint",
         "prisma:generate": "prisma generate",
         "prisma:migrate": "prisma migrate dev",
-        "scrape": "node scripts/scrape.js"
+        "scrape": "node scripts/scrape.js",
+        "scrape:ai": "node scripts/ai/scrape.js"
     },
     "dependencies": {
         "@prisma/client": "^5.14.0",
