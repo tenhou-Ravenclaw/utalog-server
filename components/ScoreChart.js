@@ -1,7 +1,11 @@
 'use client';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
+import { useState, useCallback } from 'react';
 
 export default function ScoreChart({ data }) {
+  // Tooltipの状態管理
+  const [activeTooltipData, setActiveTooltipData] = useState(null);
+
   // 採点方法の色マッピング
   const scoringMethodColors = {
     'AI採点': '#0ea5e9',
@@ -12,7 +16,7 @@ export default function ScoreChart({ data }) {
 
   // 時系列順にソートされたすべての日付を取得
   const sortedData = [...data].sort((a, b) => a.date - b.date);
-  
+
   // 採点方法別にデータをグループ化し、時系列順に並べる
   const methodDataGroups = {};
   sortedData.forEach(item => {
@@ -37,33 +41,60 @@ export default function ScoreChart({ data }) {
 
   // カスタムTooltip
   const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      const activePayloads = payload.filter(p => p.value !== undefined && p.payload);
-      if (activePayloads.length === 0) return null;
-      
-      return (
-        <div style={{
-          backgroundColor: '#2d3748',
-          border: '1px solid #4a5568',
-          padding: '10px',
-          borderRadius: '4px',
-          color: '#e2e8f0'
-        }}>
-          {activePayloads.map(payload => {
-            const dataPoint = payload.payload;
-            return (
-              <div key={`${dataPoint.timestamp}-${dataPoint.scoringMethod}`}>
-                <p>{`日時: ${dataPoint.date.toLocaleString('ja-JP')}`}</p>
-                <p style={{ color: payload.color }}>
-                  {`${dataPoint.scoringMethod}: ${dataPoint.score.toFixed(3)}`}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      );
+    // アクティブでない場合や、payloadが空の場合は状態をクリア
+    if (!active || !payload || payload.length === 0) {
+      if (activeTooltipData !== null) {
+        setActiveTooltipData(null);
+      }
+      return null;
     }
-    return null;
+
+    const activePayloads = payload.filter(p => p.value !== undefined && p.payload);
+    if (activePayloads.length === 0) {
+      if (activeTooltipData !== null) {
+        setActiveTooltipData(null);
+      }
+      return null;
+    }
+
+    // 新しいデータとして設定（重複を防ぐ）
+    const newData = activePayloads.map(payload => {
+      const dataPoint = payload.payload;
+      return {
+        timestamp: dataPoint.timestamp,
+        scoringMethod: dataPoint.scoringMethod,
+        score: dataPoint.score,
+        date: dataPoint.date,
+        color: payload.color
+      };
+    });
+
+    // 前回のデータと異なる場合のみ更新
+    const currentKey = newData.map(d => `${d.timestamp}-${d.scoringMethod}`).join(',');
+    const previousKey = activeTooltipData?.map(d => `${d.timestamp}-${d.scoringMethod}`).join(',') || '';
+
+    if (currentKey !== previousKey) {
+      setActiveTooltipData(newData);
+    }
+
+    return (
+      <div style={{
+        backgroundColor: '#2d3748',
+        border: '1px solid #4a5568',
+        padding: '10px',
+        borderRadius: '4px',
+        color: '#e2e8f0'
+      }}>
+        {(activeTooltipData || newData).map((dataPoint, index) => (
+          <div key={`${dataPoint.timestamp}-${dataPoint.scoringMethod}-${index}`}>
+            <p>{`日時: ${dataPoint.date.toLocaleString('ja-JP')}`}</p>
+            <p style={{ color: dataPoint.color }}>
+              {`${dataPoint.scoringMethod}: ${dataPoint.score.toFixed(3)}`}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -73,7 +104,7 @@ export default function ScoreChart({ data }) {
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis 
+          <XAxis
             type="number"
             scale="time"
             domain={['dataMin', 'dataMax']}
