@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ScoreChart from '../../../components/ScoreChart';
 import styles from '../../style/SongDetailPage.module.css';
+import { normalizeSongTitle } from '../../../lib/songUtils';
 
 export default function SongDetailPage() {
   const params = useParams();
@@ -16,11 +17,14 @@ export default function SongDetailPage() {
   // ... (useEffectは変更なし) ...
   useEffect(() => {
     if (!title) return;
+
+    const normalizedTitle = normalizeSongTitle(title);
+
     fetch('/api/songs')
       .then(res => { if (!res.ok) throw new Error('データ取得に失敗しました。'); return res.json(); })
       .then(allData => {
         const filteredData = allData
-          .filter(item => item.title === title)
+          .filter(item => normalizeSongTitle(item.title) === normalizedTitle)
           .map(item => ({
             ...item,
             date: new Date(item.date),
