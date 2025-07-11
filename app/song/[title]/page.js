@@ -49,8 +49,6 @@ export default function SongDetailPage() {
         return '#0ea5e9'; // 青系
       case 'AI Heart採点':
         return '#e91e63'; // ピンク系
-      case '精密採点DX-G':
-        return '#10b981'; // 緑系
       default:
         return '#64748b'; // グレー系
     }

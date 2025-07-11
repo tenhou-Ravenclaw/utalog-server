@@ -6,9 +6,8 @@ import styles from './Sidebar.module.css';
 
 // メニューの項目
 const menuItems = [
-    { href: '/ai-heart', label: '精密採点Ai Heart' }, // 新しい項目
+  { href: '/ai-heart', label: '精密採点Ai Heart' }, // 新しい項目
   { href: '/ai', label: '精密採点Ai' },
-  { href: '/dx-g', label: '精密採点DX-G' }, // 将来の拡張用
 ];
 
 // propsとして isOpen と closeSidebar を受け取る
@@ -29,8 +28,8 @@ export default function Sidebar({ isOpen, closeSidebar }) {
         <ul>
           {menuItems.map(item => (
             <li key={item.href}>
-              <Link 
-                href={item.href} 
+              <Link
+                href={item.href}
                 className={`${styles.menuLink} ${pathname === item.href ? styles.active : ''}`}
                 onClick={handleLinkClick}
               >
