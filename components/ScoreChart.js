@@ -10,7 +10,6 @@ export default function ScoreChart({ data }) {
   const scoringMethodColors = {
     'AI採点': '#0ea5e9',
     'AI Heart採点': '#e91e63',
-    '精密採点DX-G': '#10b981',
     'レガシー': '#64748b'
   };
 

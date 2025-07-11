@@ -27,7 +27,6 @@ async function main() {
   const scripts = [
     { path: 'scripts/ai/scrape.js', name: 'AI採点' },
     // 将来の拡張用：他の採点方法のスクリプトをここに追加
-    { path: 'scripts/dx-g/scrape.js', name: '精密採点DX-G' },
     { path: 'scripts/ai-heart/scrape.js', name: 'AI Heart採点' },
   ];
 
