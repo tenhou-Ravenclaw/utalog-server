@@ -21,11 +21,6 @@ export async function GET(request, { params }) {
                     orderBy: { date: 'desc' },
                 });
                 break;
-            case 'dxg':
-                history = await prisma.dXGSongHistory.findMany({
-                    orderBy: { date: 'desc' },
-                });
-                break;
             default:
                 return NextResponse.json({ error: 'Invalid scoring type' }, { status: 400 });
         }

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     // 各採点方法のデータを並行して取得
-    const [aiHistory, aiHeartHistory, dxgHistory] = await Promise.all([
+    const [aiHistory, aiHeartHistory] = await Promise.all([
       prisma.aISongHistory.findMany({
         orderBy: { date: 'desc' },
         select: {
@@ -32,25 +32,12 @@ export async function GET() {
           updatedAt: true,
         },
       }),
-      prisma.dXGSongHistory.findMany({
-        orderBy: { date: 'desc' },
-        select: {
-          id: true,
-          title: true,
-          artist: true,
-          score: true,
-          date: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      }),
     ]);
 
     // 各データに採点方法を示すタグを追加
     const taggedHistory = [
       ...aiHistory.map(item => ({ ...item, scoringMethod: 'AI採点' })),
       ...aiHeartHistory.map(item => ({ ...item, scoringMethod: 'AI Heart採点' })),
-      ...dxgHistory.map(item => ({ ...item, scoringMethod: '精密採点DX-G' })),
     ];
 
     // 日付でソート
