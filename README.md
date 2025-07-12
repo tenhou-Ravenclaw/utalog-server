@@ -54,7 +54,7 @@ DAM★ともの採点履歴を自動で取得し、分析・可視化するた�
     ```
     ブラウザで `http://localhost:3000` を開いてください。
 
-    **docker　composeでも実行することができます**
+    **docker composeでも実行することができます**
      ```bash
     docker compose up -d  
     ```
