@@ -14,7 +14,6 @@ export default function RootPage() {
     // リダイレクト中の表示
     return (
         <div style={{
-            alignItems: 'center',
             minHeight: '100vh',
             color: 'black',
             fontSize: '1.5rem'
