@@ -17,15 +17,12 @@ export default function HomePage() {
         if (!res.ok) throw new Error('データベースからのデータ取得に失敗しました。');
         return res.json();
       })
-      .then(data => {
-        // ★★★ 「一採点一表示」に戻すため、集計ロジックは不要 ★★★
-        const formattedHistory = data.map(item => ({
+      .then(({ history }) => {
+        setHistory(history.map(item => ({
           ...item,
           date: new Date(item.date),
-          // score が null や undefined でも 0 として扱う
           score: Number(item.score) || 0,
-        }));
-        setHistory(formattedHistory);
+        })));
         setLoading(false);
       })
       .catch(err => { setError(err.message); setLoading(false); });

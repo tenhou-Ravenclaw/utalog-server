@@ -17,13 +17,12 @@ export default function AIHeartPage() {
                 if (!res.ok) throw new Error('AI Heart採点データの取得に失敗しました。');
                 return res.json();
             })
-            .then(data => {
-                const formattedHistory = data.map(item => ({
+            .then(({ history }) => {
+                setHistory(history.map(item => ({
                     ...item,
                     date: new Date(item.date),
                     score: Number(item.score) || 0,
-                }));
-                setHistory(formattedHistory);
+                })));
                 setLoading(false);
             })
             .catch(err => { setError(err.message); setLoading(false); });

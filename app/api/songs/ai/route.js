@@ -10,11 +10,17 @@ export async function GET() {
   }
 
   try {
-    const history = await prisma.songHistory.findMany({
-      where: { userId: session.user.id, scoringType: 'ai' },
-      orderBy: { date: 'desc' },
-    });
-    return NextResponse.json(history);
+    const [history, user] = await Promise.all([
+      prisma.songHistory.findMany({
+        where: { userId: session.user.id, scoringType: 'ai' },
+        orderBy: { date: 'desc' },
+      }),
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { lastScrapedAt: true },
+      }),
+    ]);
+    return NextResponse.json({ history, scraped: !!user?.lastScrapedAt });
   } catch (error) {
     console.error('AI採点データの取得エラー:', error);
     return NextResponse.json({ error: 'データ取得に失敗しました' }, { status: 500 });
