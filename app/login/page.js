@@ -72,7 +72,7 @@ export default function LoginPage() {
         </form>
 
         <p className={styles.hint}>
-          DAM★とも の ID とパスワードは utalog には保存されません
+          パスワードは utalog には保存されません
         </p>
       </div>
     </div>
