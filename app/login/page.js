@@ -3,12 +3,11 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import styles from './login.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
 
     const result = await signIn('credentials', {
-      email,
+      loginId,
       password,
       redirect: false,
     });
@@ -27,10 +26,11 @@ export default function LoginPage() {
     setLoading(false);
 
     if (result?.error) {
-      setError('メールアドレスまたはパスワードが正しくありません');
+      setError(result.error === 'しばらく時間をおいてから再試行してください'
+        ? result.error
+        : 'IDまたはパスワードが正しくありません');
     } else {
-      router.push('/ai');
-      router.refresh();
+      router.push('/loading');
     }
   };
 
@@ -38,18 +38,18 @@ export default function LoginPage() {
     <div className={styles.container}>
       <div className={styles.card}>
         <h1 className={styles.title}>Uta-Log</h1>
-        <p className={styles.subtitle}>ログイン</p>
+        <p className={styles.subtitle}>DAM★とも アカウントでログイン</p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
-            <label className={styles.label}>メールアドレス</label>
+            <label className={styles.label}>DAM★とも ID</label>
             <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              type="text"
+              value={loginId}
+              onChange={e => setLoginId(e.target.value)}
               className={styles.input}
               required
-              autoComplete="email"
+              autoComplete="username"
             />
           </div>
           <div className={styles.field}>
@@ -71,9 +71,8 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className={styles.link}>
-          アカウントをお持ちでない方は{' '}
-          <Link href="/register">新規登録</Link>
+        <p className={styles.hint}>
+          パスワードは utalog には保存されません
         </p>
       </div>
     </div>

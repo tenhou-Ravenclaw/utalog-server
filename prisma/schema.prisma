@@ -13,9 +13,8 @@ datasource db {
 
 model User {
   id             String        @id @default(cuid())
-  email          String        @unique
-  password       String
-  cdmCardNo      String
+  cdmCardNo      String        @unique
+  damLoginId     String?
   lastScrapedAt  DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt

@@ -77,7 +77,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
 
         {session?.user && (
           <div className={styles.userInfo}>
-            <p className={styles.userEmail}>{session.user.email}</p>
+            <p className={styles.userLoginId}>{session.user.damLoginId}</p>
             <button
               onClick={() => signOut({ callbackUrl: '/login' })}
               className={styles.logoutButton}

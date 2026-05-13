@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Sidebar from '../components/Sidebar';
 import styles from './Layout.module.css';
 
-const AUTH_PATHS = ['/login', '/register'];
+const AUTH_PATHS = ['/login', '/loading'];
 
 export default function RootLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

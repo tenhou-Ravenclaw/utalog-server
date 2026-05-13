@@ -101,19 +101,9 @@
   cursor: not-allowed;
 }
 
-.link {
+.hint {
   text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
-.link a {
-  color: #0ea5e9;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.link a:hover {
-  text-decoration: underline;
+  margin-top: 1.25rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
 }
