@@ -30,8 +30,7 @@ export default function LoginPage() {
         ? result.error
         : 'IDまたはパスワードが正しくありません');
     } else {
-      router.push('/ai');
-      router.refresh();
+      router.push('/loading');
     }
   };
 
