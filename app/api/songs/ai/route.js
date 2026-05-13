@@ -1,19 +1,22 @@
-import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../../../lib/auth.js';
+import prisma from '../../../../lib/prisma.js';
 import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
-
-// AI採点の履歴を取得するAPI
 export async function GET() {
-    try {
-        const aiHistory = await prisma.aISongHistory.findMany({
-            orderBy: {
-                date: 'desc',
-            },
-        });
-        return NextResponse.json(aiHistory);
-    } catch (error) {
-        console.error('AI採点データの取得エラー:', error);
-        return NextResponse.json({ error: 'Failed to fetch AI scoring data' }, { status: 500 });
-    }
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: 'ログインが必要です' }, { status: 401 });
+  }
+
+  try {
+    const history = await prisma.songHistory.findMany({
+      where: { userId: session.user.id, scoringType: 'ai' },
+      orderBy: { date: 'desc' },
+    });
+    return NextResponse.json(history);
+  } catch (error) {
+    console.error('AI採点データの取得エラー:', error);
+    return NextResponse.json({ error: 'データ取得に失敗しました' }, { status: 500 });
+  }
 }
