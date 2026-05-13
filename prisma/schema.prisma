@@ -6,45 +6,37 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-model ScoringType {
-  id          String        @id @unique
-  name        String        @unique
-  description String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+model User {
+  id             String        @id @default(cuid())
+  email          String        @unique
+  password       String
+  cdmCardNo      String
+  lastScrapedAt  DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  songs          SongHistory[]
 }
 
-// AI採点専用テーブル
-model AISongHistory {
-  id        String   @id @unique
-  title     String
-  artist    String
-  score     Float
-  date      DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model SongHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  externalId  String
+  title       String
+  artist      String
+  score       Float
+  date        DateTime
+  scoringType String   // 'ai' | 'ai-heart'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  @@index([date])
-  @@index([title])
-  @@map("ai_song_histories")
-}
-
-
-// AI Heart採点専用テーブル
-model AIHeartSongHistory {
-  id        String   @id @unique
-  title     String
-  artist    String
-  score     Float
-  date      DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([date])
-  @@index([title])
-  @@map("ai_heart_song_histories")
+  @@unique([userId, externalId, scoringType])
+  @@index([userId, date])
+  @@index([userId, title])
+  @@map("song_histories")
 }

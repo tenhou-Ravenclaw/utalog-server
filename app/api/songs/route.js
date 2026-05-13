@@ -1,58 +1,29 @@
-import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../../lib/auth.js';
+import prisma from '../../../lib/prisma.js';
 import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
-
-// 利用可能な採点方法の一覧
-const AVAILABLE_SCORING_METHODS = ['AI採点', 'AI Heart採点'];
-
-// 全ての採点方法の履歴を統合して取得するAPI
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: 'ログインが必要です' }, { status: 401 });
+  }
+
   try {
-    // 各採点方法のデータを並行して取得
-    const [aiHistory, aiHeartHistory] = await Promise.all([
-      prisma.aISongHistory.findMany({
-        orderBy: { date: 'desc' },
-        select: {
-          id: true,
-          title: true,
-          artist: true,
-          score: true,
-          date: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      }),
-      prisma.aIHeartSongHistory.findMany({
-        orderBy: { date: 'desc' },
-        select: {
-          id: true,
-          title: true,
-          artist: true,
-          score: true,
-          date: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      }),
-    ]);
+    const history = await prisma.songHistory.findMany({
+      where: { userId: session.user.id },
+      orderBy: { date: 'desc' },
+      select: { id: true, title: true, artist: true, score: true, date: true, scoringType: true },
+    });
 
-    // 各データに採点方法を示すタグを追加
-    const taggedHistory = [
-      ...aiHistory.map(item => ({ ...item, scoringMethod: 'AI採点' })),
-      ...aiHeartHistory.map(item => ({ ...item, scoringMethod: 'AI Heart採点' })),
-    ];
+    const tagged = history.map(item => ({
+      ...item,
+      scoringMethod: item.scoringType === 'ai' ? 'AI採点' : 'AI Heart採点',
+    }));
 
-    // 日付でソート
-    const sortedHistory = taggedHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    return NextResponse.json(sortedHistory);
+    return NextResponse.json(tagged);
   } catch (error) {
     console.error('統合採点データの取得エラー:', error);
-    return NextResponse.json({
-      error: 'Failed to fetch data',
-      message: 'データベースからの統合データ取得に失敗しました',
-      availableScoringMethods: AVAILABLE_SCORING_METHODS
-    }, { status: 500 });
+    return NextResponse.json({ error: 'データ取得に失敗しました' }, { status: 500 });
   }
 }

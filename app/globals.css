@@ -2,6 +2,10 @@
 
 /* Tailwindの命令は不要なので削除されたまま */
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html {
   background-color: #f1f5f9; /* アプリ全体の背景色をここに設定 */
 }

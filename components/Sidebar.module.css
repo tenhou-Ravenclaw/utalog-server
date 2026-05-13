@@ -1,28 +1,33 @@
 /* components/Sidebar.module.css */
 
 .sidebar {
-  width: 250px; /* サイドバーの幅 */
-  height: 100vh; /* 画面の高さに合わせる */
-  position: fixed; /* 画面に固定 */
+  width: 250px;
+  height: 100vh;
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 40; /* ヘッダー(z-50)よりは下、コンテンツよりは上 */
+  z-index: 40;
   background-color: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-right: 1px solid #e2e8f0;
-  padding-top: 80px; /* ★★★ ヘッダーの高さ分、上を空ける ★★★ */
-  
-  /* 開閉アニメーションの設定 */
+  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
   transition: transform 0.3s ease-in-out;
-  transform: translateX(0); /* 初期状態（開いている） */
+  transform: translateX(0);
 }
 
-/* 閉じているときのスタイル */
 .sidebar.closed {
-  transform: translateX(-100%); /* 画面の左外に完全に隠す */
+  transform: translateX(-100%);
 }
 
-/* メニューのスタイル */
+/* ナビゲーション */
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
 .menuTitle {
   font-size: 0.75rem;
   font-weight: 700;
@@ -52,4 +57,84 @@
   background-color: #0ea5e9;
   color: white;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* フッター */
+.footer {
+  padding: 1rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scrapeButton {
+  width: 100%;
+  padding: 0.625rem;
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.scrapeButton:hover:not(:disabled) {
+  background: #0284c7;
+}
+
+.scrapeButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.scrapeSuccess {
+  font-size: 0.75rem;
+  color: #16a34a;
+  margin: 0;
+  text-align: center;
+}
+
+.scrapeError {
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin: 0;
+  text-align: center;
+}
+
+/* ユーザー情報 */
+.userInfo {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.userEmail {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logoutButton {
+  width: 100%;
+  padding: 0.5rem;
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.logoutButton:hover {
+  background: #f1f5f9;
+  color: #374151;
+  border-color: #cbd5e1;
 }
