@@ -10,13 +10,16 @@ export default function LoadingPage() {
   const MAX_POLL = 40; // 最大40回 × 3秒 = 120秒
 
   useEffect(() => {
+    // スクレイプをトリガー（エラーは無視して polling に委ねる）
+    fetch('/api/scrape', { method: 'POST' }).catch(() => {});
+
     const check = async () => {
       try {
         const res = await fetch('/api/songs/ai');
         if (!res.ok) { router.push('/ai'); return; }
-        const { history, scraped } = await res.json();
+        const { history } = await res.json();
         // データが1件でも入っていれば遷移（全件揃うのを待たない）
-        if (history.length > 0 || scraped) {
+        if (history.length > 0) {
           clearInterval(pollRef.current);
           router.push('/ai');
         }
@@ -26,9 +29,7 @@ export default function LoadingPage() {
       }
     };
 
-    // 即時チェック
-    check();
-
+    // interval を先にセットしてから即時チェック（clearInterval が確実に動くよう順序を保証）
     pollRef.current = setInterval(() => {
       pollCount.current += 1;
       if (pollCount.current >= MAX_POLL) {
@@ -39,8 +40,10 @@ export default function LoadingPage() {
       check();
     }, 3000);
 
+    check();
+
     return () => clearInterval(pollRef.current);
-  }, []);
+  }, [router]);
 
   return (
     <div style={{
