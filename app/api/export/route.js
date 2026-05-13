@@ -3,6 +3,8 @@ import { authOptions } from '../../../lib/auth.js';
 import prisma from '../../../lib/prisma.js';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 function convertToCSV(data) {
   const headers = ['曲名', 'アーティスト名', 'スコア', '採点方法', '歌唱日時'];
 

@@ -3,6 +3,8 @@ import { authOptions } from '../../../../lib/auth.js';
 import prisma from '../../../../lib/prisma.js';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session) {

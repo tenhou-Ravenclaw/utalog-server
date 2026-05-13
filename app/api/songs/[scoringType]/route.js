@@ -3,6 +3,8 @@ import { authOptions } from '../../../../lib/auth.js';
 import prisma from '../../../../lib/prisma.js';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 const ALLOWED_SCORING_TYPES = ['ai', 'ai-heart'];
 
 export async function GET(request, { params }) {

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { fetchDamCardNo } from '../../../lib/damAuth.js';
 import { damAuthLimiter, getIp } from '../../../lib/ratelimit.js';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * DAM★とも ID + パスワードで認証して cdmCardNo を返す
  * POST body: { loginId: string, password: string }

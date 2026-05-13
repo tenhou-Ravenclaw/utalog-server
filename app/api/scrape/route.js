@@ -4,6 +4,8 @@ import prisma from '../../../lib/prisma.js';
 import { scrapeScoring } from '../../../lib/scraper.js';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 const SCRAPE_INTERVAL_MS = 5 * 60 * 1000; // 5分
 
 export async function POST() {
